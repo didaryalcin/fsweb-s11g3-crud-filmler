@@ -7,6 +7,7 @@ import axios from "axios";
 const EditMovieForm = (props) => {
   const { push } = useHistory();
 
+  const { id } = useParams();
   const { setMovies } = props;
   const [movie, setMovie] = useState({
     title: "",
@@ -15,6 +16,13 @@ const EditMovieForm = (props) => {
     metascore: 0,
     description: "",
   });
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:9000/api/movies/" + id)
+      .then((response) => setMovie({ ...response.data }))
+      .catch((err) => console.log(err));
+  }, [id]);
 
   const handleChange = (e) => {
     setMovie({
@@ -28,7 +36,7 @@ const EditMovieForm = (props) => {
     axios
       .put(`http://localhost:9000/api/movies/${id}`, movie)
       .then((res) => {
-        setMovies(res.data);
+        setMovie(res.data);
         push(`/movies/${movie.id}`);
       })
       .catch((err) => {
@@ -42,7 +50,9 @@ const EditMovieForm = (props) => {
     <div className="bg-white rounded-md shadow flex-1">
       <form onSubmit={handleSubmit}>
         <div className="p-5 pb-3 border-b border-zinc-200">
-          <h4 className="text-xl font-bold">Düzenleniyor <strong>{movie.title}</strong></h4>
+          <h4 className="text-xl font-bold">
+            Düzenleniyor <strong>{movie.title}</strong>
+          </h4>
         </div>
 
         <div className="px-5 py-3">
